@@ -40,7 +40,8 @@
         templateCell = [self dequeueReusableCellWithIdentifier:identifier];
         NSAssert(templateCell != nil, @"Cell must be registered to table view for identifier - %@", identifier);
         templateCell.fd_isTemplateLayoutCell = YES;
-        templateCell.contentView.translatesAutoresizingMaskIntoConstraints = NO;
+//sss// fix for iOS10.2
+//        templateCell.contentView.translatesAutoresizingMaskIntoConstraints = NO;
         templateCellsByIdentifiers[identifier] = templateCell;
         [self fd_debugLog:[NSString stringWithFormat:@"layout cell created - %@", identifier]];
     }
@@ -97,11 +98,15 @@
         // Add a hard width constraint to make dynamic content views (like labels) expand vertically instead
         // of growing horizontally, in a flow-layout manner.
         if (contentViewWidth > 0) {
-            NSLayoutConstraint *widthFenceConstraint = [NSLayoutConstraint constraintWithItem:templateLayoutCell.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:contentViewWidth];
-            [templateLayoutCell.contentView addConstraint:widthFenceConstraint];
-            // Auto layout engine does its math
-            fittingSize = [templateLayoutCell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-            [templateLayoutCell.contentView removeConstraint:widthFenceConstraint];
+//sss// fix for 10.2
+//            NSLayoutConstraint *widthFenceConstraint = [NSLayoutConstraint constraintWithItem:templateLayoutCell.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:contentViewWidth];
+//            [templateLayoutCell.contentView addConstraint:widthFenceConstraint];
+//            // Auto layout engine does its math
+//            fittingSize = [templateLayoutCell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+//            [templateLayoutCell.contentView removeConstraint:widthFenceConstraint];
+          fittingSize = UILayoutFittingCompressedSize;
+          fittingSize.width = CGRectGetWidth(self.frame);
+          fittingSize = [templateLayoutCell systemLayoutSizeFittingSize:fittingSize withHorizontalFittingPriority:UILayoutPriorityRequired verticalFittingPriority:UILayoutPriorityFittingSizeLevel];
         }
     }
     
